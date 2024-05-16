@@ -1,0 +1,66 @@
+---
+- name: Instalar e configurar Zabbix Agent
+  hosts: agent
+  become: yes
+
+  vars:
+    zabbix_server_address: "192.168.0.201"
+
+  tasks:
+    - name: Instalar pacote Zabbix Agent no Ubuntu
+      block:
+        - name: Instalar pacote Zabbix Agent no Ubuntu
+          apt:
+            name: zabbix-agent
+            state: present
+
+      when: ansible_distribution == 'Ubuntu'
+
+    - name: Instalar pacote Zabbix Agent no Fedora
+      block:
+        - name: Instalar pacote Zabbix Agent no Fedora
+          yum:
+            name: zabbix-agent
+            state: present
+
+      when: ansible_distribution == 'Fedora'
+
+    - name: Configurar arquivo de configuração Zabbix Agent no Ubuntu
+      block:
+        - name: Configurar arquivo de configuração Zabbix Agent no Ubuntu
+          template:
+            src: zabbix_agentd.conf.j2
+            dest: /etc/zabbix/zabbix_agentd.conf
+          notify:
+            - restart zabbix-agent
+
+      notify:
+        - restart zabbix-agent
+
+      when: ansible_distribution == 'Ubuntu'
+
+    - name: Configurar arquivo de configuração Zabbix Agent no Fedora
+      block:
+        - name: Configurar arquivo de configuração Zabbix Agent no Fedora
+          template:
+            src: zabbix_agentd.conf.j2
+            dest: /etc/zabbix_agentd.conf
+          notify:
+            - restart zabbix-agent
+
+      notify:
+        - restart zabbix-agent
+
+      when: ansible_distribution == 'Fedora'
+
+    - name: Iniciar serviço Zabbix Agent
+      service:
+        name: zabbix-agent
+        state: started
+        enabled: yes
+
+  handlers:
+    - name: restart zabbix-agent
+      service:
+        name: zabbix-agent
+        state: restarted

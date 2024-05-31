@@ -23,16 +23,6 @@ Este repositório contém playbooks do Ansible para a instalação automatizada 
 Edite o arquivo `hosts` para incluir os endereços IP ou nomes dos seus servidores:
 
 ```ini
-# This is the default ansible 'hosts' file.
-#
-# It should live in /etc/ansible/hosts
-#
-#   - Comments begin with the '#' character
-#   - Blank lines are ignored
-#   - Groups of hosts are delimited by [header] elements
-#   - You can enter hostnames or ip addresses
-#   - A hostname/ip can be a member of multiple groups
-
 [ubuntu_server]
 192.168.0.201
 192.168.0.202

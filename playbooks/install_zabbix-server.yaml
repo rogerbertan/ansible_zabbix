@@ -1,0 +1,112 @@
+---
+- name: Install Zabbix Server, Frontend, Agent, MySQL, and Apache
+  hosts: server
+  become: yes
+  become_user: root
+  vars:
+    ansible_become_password: 'tcc123'
+
+  tasks:
+    - name: apt update
+      apt:
+        update_cache: yes
+
+    - name: Instalar as dependências necessárias
+      apt:
+        name: 
+          - gnupg
+          - wget
+          - python3-pip
+        state: present
+
+    - name: Baixar repositório Zabbix
+      command: wget https://repo.zabbix.com/zabbix/6.0/ubuntu/pool/main/z/zabbix-release/zabbix-release_6.0-4+ubuntu22.04_all.deb -O /tmp/zabbix-release_6.0-4+ubuntu22.04_all.deb
+
+    - name: Instalar repositório Zabbix
+      command: dpkg -i /tmp/zabbix-release_6.0-4+ubuntu22.04_all.deb
+      notify:
+        - Update apt cache
+
+    - name: Instalar Zabbix server
+      apt:
+        name:
+          - zabbix-server-mysql
+          - zabbix-frontend-php
+          - zabbix-sql-scripts
+          - zabbix-agent
+          - zabbix-apache-conf
+        state: present
+
+    - name: Instalar MySQL server
+      apt:
+        name: mysql-server
+        state: present
+
+    - name: Iniciar e habilitar serviço MySQL
+      service:
+        name: mysql
+        state: started
+        enabled: yes
+
+    - name: Esperar pelo serviço MySQL ficar pronto
+      wait_for:
+        port: 3306
+        state: started
+        delay: 10
+
+    - name: Configurar MySQL para permitir criação de função sem privilégio SUPER
+      shell: "echo 'log_bin_trust_function_creators = 1' >> /etc/mysql/mysql.conf.d/mysqld.cnf"
+      notify:
+        - Restart MySQL
+
+    - name: Criar Zabbix database
+      command: mysql -e 'CREATE DATABASE IF NOT EXISTS zabbix CHARACTER SET utf8mb4 COLLATE utf8mb4_bin;'
+      become_user: root
+
+    - name: Criar usuário Zabbix MySQL
+      command: mysql -uroot -e "CREATE USER IF NOT EXISTS 'zabbix'@'localhost' IDENTIFIED BY 'zabbix'; GRANT ALL PRIVILEGES ON zabbix.* TO 'zabbix'@'localhost';"
+      become_user: root
+
+    - name: Importar schema e data inicial
+      shell: "zcat /usr/share/zabbix-sql-scripts/mysql/server.sql.gz | mysql -u zabbix -pzabbix zabbix --force"
+      become_user: root
+
+    - name: Configurar Zabbix server para usar a database criada
+      lineinfile:
+        dest: /etc/zabbix/zabbix_server.conf
+        regexp: '^# DBPassword='
+        line: 'DBPassword=zabbix'
+
+    - name: Configurar timezone do Zabbix
+      lineinfile:
+        dest: /etc/zabbix/apache.conf
+        regexp: '^php_value date.timezone'
+        line: 'php_value date.timezone America/Sao_Paulo'
+
+    - name: Reiniciar Apache
+      service:
+        name: apache2
+        state: restarted
+        enabled: yes
+
+    - name: Iniciar e habilitar serviço Zabbix Server
+      service:
+        name: zabbix-server
+        state: started
+        enabled: yes
+
+    - name: Iniciar e habilitar serviço Zabbix Agent
+      service:
+        name: zabbix-agent
+        state: started
+        enabled: yes
+
+  handlers:
+    - name: Update apt cache
+      apt:
+        update_cache: yes
+
+    - name: Restart MySQL
+      service:
+        name: mysql
+        state: restarted

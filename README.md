@@ -1,5 +1,11 @@
 # Implementação do Zabbix com Ansible
 
+Este projeto é parte de um Trabalho de Conclusão de Curso (TCC) do curso de Engenharia de Computação. No contexto da atual era digital, onde a tecnologia é a base das operações e estratégias empresariais, o monitoramento eficaz de sistemas e infraestruturas de Tecnologia da Informação (TI) tornou-se um pilar indispensável para a manutenção integral dos negócios. Nesse cenário, a capacidade de implementar e configurar rapidamente ambientes de monitoramento ganha uma importância ainda maior, o que, em contrapartida, pode trazer consigo desafios substanciais.
+
+Esta pesquisa busca oferecer um estudo aprofundado de como a automação, em particular, por meio da ferramenta Ansible, pode efetivamente enfrentar os desafios de sistemas complexos, acelerar o processo de implantação e manter a uniformidade das configurações. Essa abordagem automatizada tem o potencial de revolucionar a forma como as organizações gerenciam suas infraestruturas de TI, garantindo maior estabilidade e escalabilidade em todo o processo. Sendo assim, considera-se este estudo de grande relevância, pois aborda um problema real enfrentado por organizações.
+
+O objetivo deste trabalho é avaliar os benefícios da automação com o Ansible na implantação de sistemas de monitoramento, como o Zabbix, visando reduzir erros, garantir configurações consistentes e otimizar o tempo de implantação. Para atingir o objetivo, as etapas incluem definir a infraestrutura de TI, desenvolver playbooks e roles com o Ansible, implementar e configurar o Zabbix, avaliar erros, verificar a consistência das configurações, analisar o tempo de implementação, documentar resultados e identificar melhorias. Além de visar a otimização de processos internos, a pesquisa busca também contribuir para o avanço do conhecimento em automação e monitoramento, fornecendo um guia para eficiência e excelência operacional, neste quesito, às organizações.
+
 Este repositório contém playbooks do Ansible para a instalação automatizada do Zabbix Server e do Zabbix Agent, além de arquivos de configuração necessários.
 
 ## Estrutura do Repositório

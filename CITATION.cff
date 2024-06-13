@@ -1,4 +1,4 @@
-cff-version: 1.2.0
+cff-version: 1.0.0
 message: "Se você usar este repositório, cite-o da seguinte maneira:"
 title: "Implementação do Zabbix com Ansible"
 version: "2.1.0"
